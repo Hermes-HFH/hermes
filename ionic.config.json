@@ -1,0 +1,7 @@
+{
+  "name": "hermes",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}
