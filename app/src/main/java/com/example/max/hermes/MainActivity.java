@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         LOG_TAG = getResources().getString(R.string.app_name);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -37,13 +36,7 @@ public class MainActivity extends AppCompatActivity {
             // There's nothing the app can do in this case. Closing app.
         }
 
-        // Check to see if bluetooth is enabled. Prompt to enable it
-        if( !mBluetoothAdapter.isEnabled())
-        {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
-
+        enableBluetoothOnDevice();
 
         // Toasts the test ad message on the screen. Remove this after defining your own ad unit ID.
         Toast.makeText(this, TOAST_TEXT, Toast.LENGTH_LONG).show();
