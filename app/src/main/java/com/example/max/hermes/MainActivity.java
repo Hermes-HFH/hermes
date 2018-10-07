@@ -1,18 +1,20 @@
 package com.example.max.hermes;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 import android.bluetooth.*;
 import android.util.Log;
-import android.content.IntentFilter;
 import android.content.Intent;
-import java.util.ArrayList;
+import com.example.max.hermes.BlueDude;
 
 public class MainActivity extends AppCompatActivity {
 
+    private BlueDude dude;
     private String LOG_TAG;
     private int REQUEST_ENABLE_BT = 99; // Any positive integer should work.
     private BluetoothAdapter mBluetoothAdapter;
@@ -23,6 +25,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        this.dude = new BlueDude(getApplicationContext());
+        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.fab);
+        final boolean pressed[] = {false};
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!pressed[0]) {
+                    dude.startScanning();
+                    pressed[0] = true;
+                } else {
+                    dude.stopScanning();
+                    pressed[0] = false;
+                    Toast.makeText(getApplicationContext(), dude.getClientList().toString(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         LOG_TAG = getResources().getString(R.string.app_name);
 
