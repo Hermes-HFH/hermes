@@ -1,26 +1,26 @@
 package com.example.max.hermes
 
 import android.os.Bundle
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
+import android.bluetooth.*
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
+import android.util.Log;
 import android.widget.Toast
 import android.content.Context
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import android.content.IntentFilter
+import android.content.Intent
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private val mBluetoothAdapter: BluetoothAdapter? by lazy(LazyThreadSafetyMode.NONE) {
-        val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        bluetoothManager.adapter
-    }
+    private var LOG_TAG: String = "";
+    private var REQUEST_ENABLE_BT: Int = 99;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,14 +32,44 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .setAction("Action", null).show()
         }
 
-        val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+        var mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        Toast.makeText(this, "FOOBAR", Toast.LENGTH_SHORT).show()
+//        val mBluetoothAdapter: BluetoothAdapter? by lazy(LazyThreadSafetyMode.NONE) {
+//            val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+//            bluetoothManager.adapter
+//        }
+
+        var filter = IntentFilter();
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        filter.addAction(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+//        registerReceiver(mReceiver, filter);
+
+//        Toast.makeText(this, "FOOBAR", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, "test ing", Toast.LENGTH_SHORT).show()
+
+        if (mBluetoothAdapter == null)
+        {
+            Log.e(LOG_TAG, "This device does not have a bluetooth adapter");
+            finish();
+            // If the android device does not have bluetooth, just return and get out.
+            // There's nothing the app can do in this case. Closing app.
+        }
+
+        // Check to see if bluetooth is enabled. Prompt to enable it
+        if( !mBluetoothAdapter.isEnabled())
+        {
+            var enableBtIntent: Intent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+
+        }
+
     }
 
     override fun onBackPressed() {
